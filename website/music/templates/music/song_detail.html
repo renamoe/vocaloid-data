@@ -4,6 +4,10 @@
 
 <h1>{{ song.name }}</h1>
 
+<style>
+
+</style>
+
 <div id="cover_img">
     <img src={{ song.cover_img_url }}>
 </div>
@@ -21,9 +25,33 @@
     </ul>
 </div>
 
-<div id="lyric">
+<div class="lyrics-container">
     <p>歌词：</p>
-    <p>{{ song.lyric | linebreaks }}</p>
+    <div class="lyrics-preview">
+        <p>{{ song.lyric | truncatechars:300 | linebreaks }}</p>
+    </div>
+    <div class="lyrics-full" style="display: none;">
+        <p>{{ song.lyric | linebreaks }}</p>
+    </div>
+    <button class="toggle-lyrics" onclick="toggleFullLyrics()">显示完整歌词</button>
 </div>
+
+<script>
+function toggleFullLyrics() {
+    const preview = document.querySelector('.lyrics-preview');
+    const full = document.querySelector('.lyrics-full');
+    const btn = document.querySelector('.toggle-lyrics');
+    
+    if (full.style.display === 'none') {
+        preview.style.display = 'none';
+        full.style.display = 'block';
+        btn.textContent = '收起歌词';
+    } else {
+        preview.style.display = 'block';
+        full.style.display = 'none';
+        btn.textContent = '显示完整歌词';
+    }
+}
+</script>
 
 {% endblock %}
