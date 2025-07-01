@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ song.name }}</h1>
+
+<div id="cover_img">
+    <img src={{ song.cover_img_url }}>
+</div>
+
+<div id="origin_url">
+    <a href={{ song.origin_url }}>网易云歌曲页面</a>
+</div>
+
+<div id="artist">
+    <p>歌手：</p>
+    <ul>
+        {% for artist in artists %}
+        <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div id="lyric">
+    <p>歌词：</p>
+    <p>{{ song.lyric | linebreaks }}</p>
+</div>
+
+{% endblock %}
