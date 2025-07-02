@@ -5,7 +5,7 @@
 <h1>{{ artist.name }}</h1>
 
 <div id="img">
-    <img src={{ artist.img_url }}>
+    <img src={{ artist.get_img_path }} style="max-width: 300px; max-height: 300px;">
 </div>
 
 <div id="origin_url">

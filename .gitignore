@@ -5,6 +5,7 @@
 /data/img_song_cover
 /data/img_artist
 /website/music/static
+/website/media
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -6,6 +6,12 @@ class Artist(models.Model):
     img_url = models.CharField(max_length=400)
     description = models.TextField()
     origin_url = models.CharField(max_length=400)
+    
+    @property
+    def get_img_path(self):
+        if len(self.img_url) == 0:
+            return '/media/img_artist/default.jpg'
+        return '/media/img_artist/' + self.artist_id + '.jpg'
 
 class Song(models.Model):
     song_id = models.CharField(max_length=30)
@@ -14,3 +20,7 @@ class Song(models.Model):
     lyric = models.TextField()
     cover_img_url = models.CharField(max_length=400)
     origin_url = models.CharField(max_length=400)
+
+    @property
+    def get_img_path(self):
+        return '/media/img_song_cover/' + self.song_id + '.jpg'
