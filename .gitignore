@@ -1,6 +1,10 @@
-# page sources data
+# page sources and img data
+/data/page_sources_songlist
 /data/page_sources_song
 /data/page_sources_artist
+/data/img_song_cover
+/data/img_artist
+/website/music/static
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
