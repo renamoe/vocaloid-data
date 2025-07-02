@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'search_form.html' %}
+    
+    <h2>搜索结果: {{ query }}</h2>
+    
+    {% if search_type == 'song' %}
+        <h3>歌曲</h3>
+        <ul>
+        {% for song in results %}
+            <li>
+                <a href="{% url 'song_detail' song.song_id %}">{{ song.name }}</a>
+            </li>
+        {% empty %}
+            <li>没有找到匹配的歌曲</li>
+        {% endfor %}
+        </ul>
+    {% elif search_type == 'artist' %}
+        <h3>艺术家</h3>
+        <ul>
+        {% for artist in results %}
+            <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+        {% empty %}
+            <li>没有找到匹配的艺术家</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

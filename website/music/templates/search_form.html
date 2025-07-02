@@ -1,0 +1,8 @@
+<form method="get" action="{% url 'search' %}">
+    <input type="text" name="q" placeholder="搜索..." value="{{ query }}">
+    <select name="type">
+        <option value="song" {% if search_type == 'song' %}selected{% endif %}>song</option>
+        <option value="artist" {% if search_type == 'artist' %}selected{% endif %}>artist</option>
+    </select>
+    <button type="submit">search!</button>
+</form>

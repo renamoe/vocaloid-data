@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import Artist, Song
 
 def mainpage(request):
@@ -34,3 +35,25 @@ def artist_detail(request, id):
     page_number = request.GET.get('page')
     songs = paginator.get_page(page_number)
     return render(request, 'music/artist_detail.html', {'artist': artist, 'songs': songs})
+
+def search(request):
+    query = request.GET.get('q', '')
+    search_type = request.GET.get('type', 'song')
+
+    if search_type == 'song':
+        results = Song.objects.filter(
+            Q(name__icontains=query) | 
+            Q(artist__name__icontains=query) | 
+            Q(lyric__icontains=query)
+        )
+    elif search_type == 'artist':
+        results = Artist.objects.filter(
+            Q(name__icontains=query) | 
+            Q(description__icontains=query)
+        )
+    
+    return render(request, 'search_result.html', {
+        'query': query,
+        'search_type': search_type,
+        'results': results
+    })

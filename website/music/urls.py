@@ -9,6 +9,7 @@ urlpatterns = [
     path('songs/<str:id>', views.song_detail, name="song_detail"),
     path('artists/', views.artist_list, name="artist_list"),
     path('artists/<str:id>', views.artist_detail, name="artist_detail"),
+    path('search/', views.search, name='search')
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
