@@ -7,7 +7,10 @@
 <div class="row">
     <ul>
         {% for song in songs %}
-        <li><a href={{ song.get_detail_page }}>{{ song.name }}<a></li>
+        <li>
+            <img src={{ song.get_img_path }} style="max-width: 60px; max-height: 60px;">
+            <a href={{ song.get_detail_page }}>{{ song.name }}<a>
+        </li>
         {% endfor %}
     </ul>
 </div>

@@ -10,7 +10,7 @@ def mainpage(request):
     return render(request, 'music/mainpage.html')
 
 def song_list(request):
-    songs_all = Song.objects.all().order_by('name')
+    songs_all = Song.objects.all().order_by('id')
     paginator = Paginator(songs_all, page_max_lines)
     page_number = request.GET.get('page')
     songs = paginator.get_page(page_number)
@@ -24,7 +24,7 @@ def song_detail(request, id):
 
 
 def artist_list(request):
-    artists_all = Artist.objects.all().order_by('name')
+    artists_all = Artist.objects.all().order_by('id')
     paginator = Paginator(artists_all, page_max_lines)
     page_number = request.GET.get('page')
     artists = paginator.get_page(page_number)

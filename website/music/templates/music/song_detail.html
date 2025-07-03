@@ -20,7 +20,10 @@
     <p>歌手：</p>
     <ul>
         {% for artist in artists %}
-        <li><a href={{ artist.get_detail_page }}>{{ artist.name }}</a></li>
+        <li>
+            <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
+            <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
+        </li>
         {% endfor %}
     </ul>
 </div>
