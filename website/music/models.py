@@ -12,6 +12,10 @@ class Artist(models.Model):
         if len(self.img_url) == 0:
             return '/media/img_artist/default.jpg'
         return '/media/img_artist/' + self.artist_id + '.jpg'
+    
+    @property
+    def get_detail_page(self):
+        return '/artists/' + self.artist_id
 
 class Song(models.Model):
     song_id = models.CharField(max_length=30)
@@ -24,3 +28,7 @@ class Song(models.Model):
     @property
     def get_img_path(self):
         return '/media/img_song_cover/' + self.song_id + '.jpg'
+    
+    @property
+    def get_detail_page(self):
+        return '/songs/' + self.song_id

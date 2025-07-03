@@ -20,7 +20,7 @@
     <p>歌手：</p>
     <ul>
         {% for artist in artists %}
-        <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+        <li><a href={{ artist.get_detail_page }}>{{ artist.name }}</a></li>
         {% endfor %}
     </ul>
 </div>

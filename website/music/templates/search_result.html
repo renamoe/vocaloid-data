@@ -10,7 +10,7 @@
         <ul>
         {% for song in results %}
             <li>
-                <a href="{% url 'song_detail' song.song_id %}">{{ song.name }}</a>
+                <a href={{ song.get_detail_page }}>{{ song.name }}</a>
             </li>
         {% empty %}
             <li>No matching songs found</li>
@@ -20,7 +20,7 @@
         <h3>artist</h3>
         <ul>
         {% for artist in results %}
-            <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+            <li><a href={{ artist.get_detail_page }}>{{ artist.name }}</a></li>
         {% empty %}
             <li>No matching artists found</li>
         {% endfor %}

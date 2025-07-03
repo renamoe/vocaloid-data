@@ -7,7 +7,7 @@
 <div class="row">
     <ul>
         {% for song in songs %}
-        <li><a href="{% url 'song_detail' song.song_id %}">{{ song.name }}<a></li>
+        <li><a href={{ song.get_detail_page }}>{{ song.name }}<a></li>
         {% endfor %}
     </ul>
 </div>
