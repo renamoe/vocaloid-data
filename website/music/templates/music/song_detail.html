@@ -57,4 +57,29 @@ function toggleFullLyrics() {
 }
 </script>
 
+<section class="comments">
+    <h3>Comments</h3>
+    {% for comment in song.comments.all %}
+        <div class="comment">
+            <p><strong>{{ comment.author }}</strong> - {{ comment.created_time }}</p>
+            <p>{{ comment.text | linebreaks }}</p>
+            <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">delete</button>
+        </form>
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+</section>
+
+<section class="add-comment">
+    <h3>Add a comment</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</section>
+
 {% endblock %}

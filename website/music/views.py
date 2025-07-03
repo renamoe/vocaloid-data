@@ -1,7 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q, Case, When, Value, IntegerField
-from .models import Artist, Song
+from django.views.decorators.http import require_POST
+from .models import Artist, Song, Comment
+from .forms import CommentForm
 import time
 
 page_max_lines = 10
@@ -20,8 +22,30 @@ def song_list(request):
 def song_detail(request, id):
     song = get_object_or_404(Song, song_id=id)
     artists = song.artist.all()
-    return render(request, 'music/song_detail.html', {'song': song, 'artists': artists})
 
+    # 评论表单
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.song = song
+            comment.save()
+            return redirect('song_detail', id=song.song_id)
+    else:
+        comment_form = CommentForm()
+
+    return render(request, 'music/song_detail.html', {
+        'song': song, 
+        'artists': artists,
+        'comment_form': comment_form
+    })
+
+@require_POST
+def delete_comment(request, id):
+    comment = get_object_or_404(Comment, id=id)
+    song_id = comment.song.song_id
+    comment.delete()
+    return redirect('song_detail', id=song_id)
 
 def artist_list(request):
     artists_all = Artist.objects.all().order_by('id')

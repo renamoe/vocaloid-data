@@ -32,3 +32,12 @@ class Song(models.Model):
     @property
     def get_detail_page(self):
         return '/songs/' + self.song_id
+
+class Comment(models.Model):
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='comments')
+    author = models.CharField(max_length=100)
+    text = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author} on {self.song.name}'
