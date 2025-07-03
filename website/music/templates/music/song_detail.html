@@ -4,26 +4,82 @@
 
 <h1>{{ song.name }}</h1>
 
+<style>
+
+</style>
+
 <div id="cover_img">
-    <img src={{ song.cover_img_url }}>
+    <img src={{ song.get_img_path }} style="max-width: 300px; max-height: 300px;">
 </div>
 
 <div id="origin_url">
-    <a href={{ song.origin_url }}>网易云歌曲页面</a>
+    <a href={{ song.origin_url }}>The original site on netease music</a>
 </div>
 
 <div id="artist">
-    <p>歌手：</p>
+    <p>Artists:</p>
     <ul>
         {% for artist in artists %}
-        <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+        <li>
+            <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
+            <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
+        </li>
         {% endfor %}
     </ul>
 </div>
 
-<div id="lyric">
-    <p>歌词：</p>
-    <p>{{ song.lyric | linebreaks }}</p>
+<div class="lyrics-container">
+    <p>Lyrics:</p>
+    <div class="lyrics-preview">
+        <p>{{ song.lyric | truncatechars:300 | linebreaks }}</p>
+    </div>
+    <div class="lyrics-full" style="display: none;">
+        <p>{{ song.lyric | linebreaks }}</p>
+    </div>
+    <button class="toggle-lyrics" onclick="toggleFullLyrics()">show full lyrics</button>
 </div>
+
+<script>
+function toggleFullLyrics() {
+    const preview = document.querySelector('.lyrics-preview');
+    const full = document.querySelector('.lyrics-full');
+    const btn = document.querySelector('.toggle-lyrics');
+    
+    if (full.style.display === 'none') {
+        preview.style.display = 'none';
+        full.style.display = 'block';
+        btn.textContent = 'fold';
+    } else {
+        preview.style.display = 'block';
+        full.style.display = 'none';
+        btn.textContent = 'show full lyrics';
+    }
+}
+</script>
+
+<section class="comments">
+    <h3>Comments</h3>
+    {% for comment in song.comments.all %}
+        <div class="comment">
+            <p><strong>{{ comment.author }}</strong> - {{ comment.created_time }}</p>
+            <p>{{ comment.text | linebreaks }}</p>
+            <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Delete</button>
+        </form>
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+</section>
+
+<section class="add-comment">
+    <h3>Add a comment</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</section>
 
 {% endblock %}

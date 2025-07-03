@@ -7,9 +7,32 @@
 <div class="row">
     <ul>
         {% for artist in artists %}
-        <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
+        <li>
+            <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
+            <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
+        </li>
         {% endfor %}
     </ul>
 </div>
+
+
+<div class="pagination">
+    <span class="step-links">
+        {% if artists.has_previous %}
+            <a href="?page=1">first</a>
+            <a href="?page={{ artists.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ artists.number }} of {{ artists.paginator.num_pages }}.
+        </span>
+
+        {% if artists.has_next %}
+            <a href="?page={{ artists.next_page_number }}">next</a>
+            <a href="?page={{ artists.paginator.num_pages }}">last</a>
+        {% endif %}
+    </span>
+</div>
+
 
 {% endblock %}
