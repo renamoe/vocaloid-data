@@ -2,37 +2,90 @@
 
 {% block content %}
 
-<h1>Artists</h1>
+<h1 class="text-center my-5">Artist List</h1>
 
-<div class="row">
-    <ul>
-        {% for artist in artists %}
-        <li>
-            <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
-            <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <ul class="list-group">
+            {% for artist in artists %}
+            <li class="list-group-item d-flex align-items-center">
+                <img src="{{ artist.get_img_path }}" class="rounded me-3"
+                    style="width: 60px; height: 60px; object-fit: cover;">
+                <a href="{{ artist.get_detail_page }}" class="fw-bold text-decoration-none">{{ artist.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 
-<div class="pagination">
-    <span class="step-links">
-        {% if artists.has_previous %}
-            <a href="?page=1">first</a>
-            <a href="?page={{ artists.previous_page_number }}">previous</a>
-        {% endif %}
+<div class="row justify-content-center mt-4">
+    <div class="col-auto">
+        <nav>
+            <ul class="pagination mb-0">
+                {% if artists.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ artists.previous_page_number }}">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">First</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">Previous</a>
+                </li>
+                {% endif %}
 
-        <span class="current">
-            Page {{ artists.number }} of {{ artists.paginator.num_pages }}.
-        </span>
+                <li class="page-item active">
+                    <span class="page-link">
+                        Page {{ artists.number }} of {{ artists.paginator.num_pages }}
+                    </span>
+                </li>
 
-        {% if artists.has_next %}
-            <a href="?page={{ artists.next_page_number }}">next</a>
-            <a href="?page={{ artists.paginator.num_pages }}">last</a>
-        {% endif %}
-    </span>
+                {% if artists.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ artists.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ artists.paginator.num_pages }}">Last</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">Next</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <div class="col-auto align-self-center">
+        <form class="d-flex ms-3" onsubmit="jumpToPage(); return false;">
+            <label class="me-2 align-self-center">Jump to</label>
+            <input type="number" min="1" max="{{ artists.paginator.num_pages }}" value="{{ artists.number }}"
+                id="page-jump-input" class="form-control form-control-sm me-2" style="width: 70px;">
+            <button type="submit" class="btn btn-sm btn-primary">Go</button>
+        </form>
+    </div>
 </div>
+
+<script>
+    function jumpToPage() {
+        const input = document.getElementById('page-jump-input');
+        let page = parseInt(input.value);
+        const maxPage = Number('{{ artists.paginator.num_pages }}');
+        if (page < 1) page = 1;
+        if (page > maxPage) page = maxPage;
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+</script>
+
 
 
 {% endblock %}

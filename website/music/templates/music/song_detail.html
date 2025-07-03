@@ -2,84 +2,108 @@
 
 {% block content %}
 
-<h1>{{ song.name }}</h1>
-
-<style>
-
-</style>
-
-<div id="cover_img">
-    <img src={{ song.get_img_path }} style="max-width: 300px; max-height: 300px;">
-</div>
-
-<div id="origin_url">
-    <a href={{ song.origin_url }}>The original site on netease music</a>
-</div>
-
-<div id="artist">
-    <p>Artists:</p>
-    <ul>
-        {% for artist in artists %}
-        <li>
-            <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
-            <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-
-<div class="lyrics-container">
-    <p>Lyrics:</p>
-    <div class="lyrics-preview">
-        <p>{{ song.lyric | truncatechars:300 | linebreaks }}</p>
-    </div>
-    <div class="lyrics-full" style="display: none;">
-        <p>{{ song.lyric | linebreaks }}</p>
-    </div>
-    <button class="toggle-lyrics" onclick="toggleFullLyrics()">show full lyrics</button>
-</div>
-
-<script>
-function toggleFullLyrics() {
-    const preview = document.querySelector('.lyrics-preview');
-    const full = document.querySelector('.lyrics-full');
-    const btn = document.querySelector('.toggle-lyrics');
-    
-    if (full.style.display === 'none') {
-        preview.style.display = 'none';
-        full.style.display = 'block';
-        btn.textContent = 'fold';
-    } else {
-        preview.style.display = 'block';
-        full.style.display = 'none';
-        btn.textContent = 'show full lyrics';
-    }
-}
-</script>
-
-<section class="comments">
-    <h3>Comments</h3>
-    {% for comment in song.comments.all %}
-        <div class="comment">
-            <p><strong>{{ comment.author }}</strong> - {{ comment.created_time }}</p>
-            <p>{{ comment.text | linebreaks }}</p>
-            <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn-delete">Delete</button>
-        </form>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-5 d-flex justify-content-center align-items-start">
+            <div id="cover_img" class="card shadow-md p-3 bg-white rounded">
+                <img src="{{ song.get_img_path }}" class="img-fluid rounded mb-2"
+                    style="max-width: 300px; max-height: 300px; object-fit: cover;">
+            </div>
         </div>
-    {% empty %}
-        <p>No comments yet.</p>
-    {% endfor %}
-</section>
+        <div class="col-md-6">
+            <h1 class="fw-bold mt-2 mb-4">{{ song.name }}</h1>
+            <div id="artist">
+                <p class="mb-1">Artists:</p>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for artist in artists %}
+                    <li class="list-group-item d-flex align-items-center ps-0">
+                        <img src="{{ artist.get_img_path }}" class="rounded-circle me-3"
+                            style="width: 48px; height: 48px; object-fit: cover;">
+                        <a href="{{ artist.get_detail_page }}" class="fw-bold text-decoration-none">
+                            {{ artist.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="origin_url" class="mb-3">
+                <a href="{{ song.origin_url }}" class="btn btn-outline-primary" target="_blank"
+                    style="font-size: small;">
+                    <i class="fas fa-external-link-alt me-1"></i>Original site on Netease Music
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<section class="add-comment">
-    <h3>Add a comment</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-</section>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card lyrics-container">
+                <div class="card-header">
+                    <p class="my-1 fw-bold">Lyrics</p>
+                </div>
+                <div class="card-body p-3" style="max-height: 500px; overflow-y: auto;">
+                    {{ song.lyric | linebreaks }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-4">
+    <div class="row justify-content-center my-4">
+        <div class="col-md-10">
+            <section class="comments card mb-3">
+                <div class="card-header">
+                    <p class="my-1 fw-bold">Comments</p>
+                </div>
+                <div class="card-body p-3">
+                    {% for comment in song.comments.all %}
+                    <div class="comment border-bottom pb-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div>
+                                <strong>{{ comment.author }}</strong>
+                                <span class="text-muted small"> - {{ comment.created_time }}</span>
+                            </div>
+                            <form method="post" action="{% url 'delete_comment' comment.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger p-0 border-0">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <p>{{ comment.text | linebreaks }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No comments yet.</p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="add-comment card">
+                <div class="card-header">
+                    <p class="my-1 fw-bold">Add a comment</p>
+                </div>
+                <div class="card-body p-3">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_author" class="form-label">Name</label>
+                            {{ comment_form.author }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_text" class="form-label">Comment</label>
+                            {{ comment_form.text }}
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

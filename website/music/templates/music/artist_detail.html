@@ -2,50 +2,110 @@
 
 {% block content %}
 
-<h1>{{ artist.name }}</h1>
-
-<div id="img">
-    <img src={{ artist.get_img_path }} style="max-width: 300px; max-height: 300px;">
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-5 d-flex justify-content-center align-items-start">
+            <div id="cover_img" class="card shadow-md p-3 bg-white rounded">
+                <img src="{{ artist.get_img_path }}" class="img-fluid rounded mb-2"
+                    style="max-width: 300px; max-height: 300px; object-fit: cover;">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h1 class="fw-bold mt-2 mb-4">{{ artist.name }}</h1>
+            <div id="desc" class="mb-3">
+                <p class="mb-1">Description:</p>
+                <p>{{ artist.description | linebreaks }}</p>
+            </div>
+            <div id="origin_url" class="mb-3">
+                <a href="{{ song.origin_url }}" class="btn btn-outline-primary" target="_blank"
+                    style="font-size: small;">
+                    <i class="fas fa-external-link-alt me-1"></i>Original site on Netease Music
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="origin_url">
-    <a href={{ artist.origin_url }}>The original site on netease music</a>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card lyrics-container">
+                <div class="card-header">
+                    <p class="my-1 fw-bold">Songs</p>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for song in songs %}
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="{{ song.get_img_path }}" class="rounded me-3"
+                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <a href="{{ song.get_detail_page }}" class="fw-bold text-decoration-none">{{ song.name }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if songs.paginator.num_pages > 1 %}
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-auto">
+                            <nav>
+                                <ul class="pagination mb-0">
+                                    {% if songs.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1">First</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ songs.previous_page_number }}">Previous</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled"><span class="page-link">First</span></li>
+                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                    {% endif %}
+
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                            Page {{ songs.number }} of {{ songs.paginator.num_pages }}
+                                        </span>
+                                    </li>
+
+                                    {% if songs.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ songs.next_page_number }}">Next</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ songs.paginator.num_pages }}">Last</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    <li class="page-item disabled"><span class="page-link">Last</span></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <form class="d-flex ms-3" onsubmit="artistJumpToPage(); return false;">
+                                <label class="me-2 align-self-center">Jump to</label>
+                                <input type="number" min="1" max="{{ songs.paginator.num_pages }}" value="{{ songs.number }}"
+                                    id="artist-page-jump-input" class="form-control form-control-sm me-2" style="width: 70px;">
+                                <button type="submit" class="btn btn-sm btn-primary">Go</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <script>
+                    function artistJumpToPage() {
+                        const input = document.getElementById('artist-page-jump-input');
+                        let page = parseInt(input.value);
+                        const maxPage = Number('{{ songs.paginator.num_pages }}');
+                        if (page < 1) page = 1;
+                        if (page > maxPage) page = maxPage;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('page', page);
+                        window.location.href = url.toString();
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div id="desc">
-    <p>Description:</p>
-    <p>{{ artist.description | linebreaks }}</p>
-</div>
-
-<div id="songs">
-    <p>Songs:</p>
-    <ul>
-        {% for song in songs %}
-        <li>
-            <img src={{ song.get_img_path }} style="max-width: 60px; max-height: 60px;">
-            <a href={{ song.get_detail_page }}>{{ song.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-
-<div class="pagination">
-    <span class="step-links">
-        {% if songs.has_previous %}
-            <a href="?page=1">first</a>
-            <a href="?page={{ songs.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ songs.number }} of {{ songs.paginator.num_pages }}.
-        </span>
-
-        {% if songs.has_next %}
-            <a href="?page={{ songs.next_page_number }}">next</a>
-            <a href="?page={{ songs.paginator.num_pages }}">last</a>
-        {% endif %}
-    </span>
-</div>
-
 
 {% endblock %}
