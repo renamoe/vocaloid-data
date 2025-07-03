@@ -3,27 +3,45 @@
 {% block content %}
     {% include 'search_form.html' %}
     
-    <h2>搜索结果: {{ query }}</h2>
+    <h2>search results:</h2>
     
     {% if search_type == 'song' %}
-        <h3>歌曲</h3>
+        <h3>songs:</h3>
         <ul>
         {% for song in results %}
             <li>
                 <a href="{% url 'song_detail' song.song_id %}">{{ song.name }}</a>
             </li>
         {% empty %}
-            <li>没有找到匹配的歌曲</li>
+            <li>No matching songs found</li>
         {% endfor %}
         </ul>
     {% elif search_type == 'artist' %}
-        <h3>艺术家</h3>
+        <h3>artist</h3>
         <ul>
         {% for artist in results %}
             <li><a href="{% url 'artist_detail' artist.artist_id %}">{{ artist.name }}</a></li>
         {% empty %}
-            <li>没有找到匹配的艺术家</li>
+            <li>No matching artists found</li>
         {% endfor %}
         </ul>
     {% endif %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if results.has_previous %}
+                <a href="?page=1{% if query_params %}&{{ query_params.urlencode }}{% endif %}">first</a>
+                <a href="?page={{ results.previous_page_number }}{% if query_params %}&{{ query_params.urlencode }}{% endif %}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ results.number }} of {{ results.paginator.num_pages }}.
+            </span>
+
+            {% if results.has_next %}
+                <a href="?page={{ results.next_page_number }}{% if query_params %}&{{ query_params.urlencode }}{% endif %}">next</a>
+                <a href="?page={{ results.paginator.num_pages }}{% if query_params %}&{{ query_params.urlencode }}{% endif %}">last</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField
 from .models import Artist, Song
 
 def mainpage(request):
@@ -31,7 +31,7 @@ def artist_list(request):
 def artist_detail(request, id):
     artist = get_object_or_404(Artist, artist_id=id)
     songs_all = Song.objects.filter(artist__artist_id=id)
-    paginator = Paginator(songs_all, 10)
+    paginator = Paginator(songs_all, 15)
     page_number = request.GET.get('page')
     songs = paginator.get_page(page_number)
     return render(request, 'music/artist_detail.html', {'artist': artist, 'songs': songs})
@@ -39,21 +39,52 @@ def artist_detail(request, id):
 def search(request):
     query = request.GET.get('q', '')
     search_type = request.GET.get('type', 'song')
+    page_number = request.GET.get('page')
 
     if search_type == 'song':
-        results = Song.objects.filter(
-            Q(name__icontains=query) | 
-            Q(artist__name__icontains=query) | 
-            Q(lyric__icontains=query)
-        )
+        # 按名称、艺术家、歌词的优先级展示搜索结果
+        name_match = Q(name__icontains=query)
+        artist_match = Q(artist__name__icontains=query)
+        lyric_match = Q(lyric__icontains=query)
+        results_all = Song.objects.filter(
+            name_match | 
+            artist_match | 
+            lyric_match
+        ).annotate(
+            match_priority=Case(
+                When(name_match, then=Value(1)),
+                When(artist_match, then=Value(2)),
+                When(lyric_match, then=Value(3)),
+                default=Value(4),
+                output_field=IntegerField()
+            )
+        ).order_by('match_priority', 'name').distinct()
+
     elif search_type == 'artist':
-        results = Artist.objects.filter(
-            Q(name__icontains=query) | 
-            Q(description__icontains=query)
-        )
+        name_match = Q(name__icontains=query)
+        description_match = Q(description__icontains=query)
+        results_all = Artist.objects.filter(
+            name_match | 
+            description_match
+        ).annotate(
+            match_priority=Case(
+                When(name_match, then=Value(1)),
+                When(description_match, then=Value(2)),
+                default=Value(3),
+                output_field=IntegerField()
+            )
+        ).order_by('match_priority', 'name').distinct()
+    
+    paginator = Paginator(results_all, 15)
+    # 传入参数, 便于翻页时保持其他参数
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
+    results = paginator.get_page(page_number)
     
     return render(request, 'search_result.html', {
         'query': query,
         'search_type': search_type,
-        'results': results
+        'results': results,
+        'query_params': query_params
     })
