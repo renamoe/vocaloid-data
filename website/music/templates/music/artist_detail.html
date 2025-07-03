@@ -9,16 +9,16 @@
 </div>
 
 <div id="origin_url">
-    <a href={{ artist.origin_url }}>网易云艺术家页面</a>
+    <a href={{ artist.origin_url }}>The original site on netease music</a>
 </div>
 
 <div id="desc">
-    <p>简介：</p>
+    <p>Description:</p>
     <p>{{ artist.description | linebreaks }}</p>
 </div>
 
 <div id="songs">
-    <p>作品：</p>
+    <p>Songs:</p>
     <ul>
         {% for song in songs %}
         <li>

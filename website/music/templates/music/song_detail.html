@@ -13,11 +13,11 @@
 </div>
 
 <div id="origin_url">
-    <a href={{ song.origin_url }}>网易云歌曲页面</a>
+    <a href={{ song.origin_url }}>The original site on netease music</a>
 </div>
 
 <div id="artist">
-    <p>歌手：</p>
+    <p>Artists:</p>
     <ul>
         {% for artist in artists %}
         <li>
@@ -29,14 +29,14 @@
 </div>
 
 <div class="lyrics-container">
-    <p>歌词：</p>
+    <p>Lyrics:</p>
     <div class="lyrics-preview">
         <p>{{ song.lyric | truncatechars:300 | linebreaks }}</p>
     </div>
     <div class="lyrics-full" style="display: none;">
         <p>{{ song.lyric | linebreaks }}</p>
     </div>
-    <button class="toggle-lyrics" onclick="toggleFullLyrics()">显示完整歌词</button>
+    <button class="toggle-lyrics" onclick="toggleFullLyrics()">show full lyrics</button>
 </div>
 
 <script>
@@ -48,11 +48,11 @@ function toggleFullLyrics() {
     if (full.style.display === 'none') {
         preview.style.display = 'none';
         full.style.display = 'block';
-        btn.textContent = '收起歌词';
+        btn.textContent = 'fold';
     } else {
         preview.style.display = 'block';
         full.style.display = 'none';
-        btn.textContent = '显示完整歌词';
+        btn.textContent = 'show full lyrics';
     }
 }
 </script>
@@ -65,7 +65,7 @@ function toggleFullLyrics() {
             <p>{{ comment.text | linebreaks }}</p>
             <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" class="btn-delete">delete</button>
+            <button type="submit" class="btn-delete">Delete</button>
         </form>
         </div>
     {% empty %}
