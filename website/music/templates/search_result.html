@@ -3,13 +3,14 @@
 {% block content %}
     {% include 'search_form.html' %}
     
-    <h2>search results:</h2>
+    <p>Searched for {{ search_count }} results. Took {{ search_time }} seconds.</p>
     
     {% if search_type == 'song' %}
         <h3>songs:</h3>
         <ul>
         {% for song in results %}
             <li>
+                <img src={{ song.get_img_path }} style="max-width: 60px; max-height: 60px;">
                 <a href={{ song.get_detail_page }}>{{ song.name }}</a>
             </li>
         {% empty %}
@@ -20,7 +21,10 @@
         <h3>artist</h3>
         <ul>
         {% for artist in results %}
-            <li><a href={{ artist.get_detail_page }}>{{ artist.name }}</a></li>
+            <li>
+                <img src={{ artist.get_img_path }} style="max-width: 60px; max-height: 60px;">
+                <a href={{ artist.get_detail_page }}>{{ artist.name }}</a>
+            </li>
         {% empty %}
             <li>No matching artists found</li>
         {% endfor %}
@@ -42,6 +46,29 @@
                 <a href="?page={{ results.next_page_number }}{% if query_params %}&{{ query_params.urlencode }}{% endif %}">next</a>
                 <a href="?page={{ results.paginator.num_pages }}{% if query_params %}&{{ query_params.urlencode }}{% endif %}">last</a>
             {% endif %}
+            <span class="page-jump">
+                jump to page <input type="number" min="1" max="{{ page_obj.paginator.num_pages }}" 
+                    value="{{ page_obj.number }}" id="page-jump-input" 
+                    style="width: 50px;">
+                <button onclick="jumpToPage()">jump!</button>
+            </span>
         </span>
     </div>
+    <script>
+    function jumpToPage() {
+        const input = document.getElementById('page-jump-input');
+        const page = input.value;
+        const maxPage = {{ results.paginator.num_pages }};
+        
+        if (page < 1) {
+            page = 1;
+        } else if (page > maxPage) {
+            page = maxPage;
+        }
+        
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+    </script>
 {% endblock %}
