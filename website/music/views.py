@@ -2,8 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q, Case, When, Value, IntegerField
 from django.views.decorators.http import require_POST
+from django.conf import settings
 from .models import Artist, Song, Comment
 from .forms import CommentForm
+import os
 import time
 
 page_max_lines = 10
@@ -61,7 +63,17 @@ def artist_detail(request, id):
     paginator = Paginator(songs_all, page_max_lines)
     page_number = request.GET.get('page')
     songs = paginator.get_page(page_number)
-    return render(request, 'music/artist_detail.html', {'artist': artist, 'songs': songs})
+
+    img_wordcloud = os.path.join(settings.MEDIA_ROOT, f'img_collaborations/{id}.jpg')
+    if os.path.isfile(img_wordcloud):
+        img_wordcloud = os.path.join(settings.MEDIA_URL, f'img_collaborations/{id}.jpg')
+    else:
+        img_wordcloud = None
+    return render(request, 'music/artist_detail.html', {
+        'artist': artist,
+        'songs': songs,
+        'img_wordcloud': img_wordcloud
+    })
 
 def search(request):
     query = request.GET.get('q', '')
