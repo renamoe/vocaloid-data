@@ -2,7 +2,7 @@
 
 本项目为 [程序设计训练（Python）2025夏](https://keg-course.github.io/python-docs/crawler/) 课程第一次大作业。
 
-本项目基于 Django 框架，结合 Selenium 爬虫，收集并展示了网易云音乐上 2045 首 Vocaloid 相关歌曲和 545 位艺术家的详细信息。
+本项目使用 Selenium 爬虫爬取数据，基于 Django 框架搭建网站，收集并展示了网易云音乐上 2045 首 Vocaloid 相关歌曲和 545 位艺术家的详细信息。
 
 ## 项目简介
 
@@ -34,6 +34,7 @@
 ├── data-aquisition/     # 爬虫脚本
 ├── website/             # Django 项目主目录
 │   ├── music/           # Django app，主要逻辑
+│   ├── website/         # Django 网站配置
 │   └── media/           # 上传/生成的媒体文件
 ```
 
